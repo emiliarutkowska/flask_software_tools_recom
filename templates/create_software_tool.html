@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Software Tool Create{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style>
+      body {
+          min-height: 75rem;
+          padding-top: 4.5rem;
+      }
+  </style>
+{% endblock %}
+{% block content %}
+    <h1>Add New Software Tool</h1>
+
+    <form method="POST" action="{{ url_for('add_software_tool') }}">
+        <div class="mb-3">
+          <label for="software_tool_name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="software_tool_name" name="software_tool_name">
+        </div>
+        <div class="mb-3">
+          <label for="website_link" class="form-label">Website link</label>
+          <input type="text" class="form-control" id="website_link" name="website_link">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" class="form-control" id="description" name="description">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="cancel" class="btn btn-primary">Cancel</button>
+    </form>
+{% endblock %}
+    

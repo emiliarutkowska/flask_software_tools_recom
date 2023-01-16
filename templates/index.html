@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Software Tools List{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="static/style.css">
+{% endblock %}
+{% block content %}
+      <div>
+                <h2>Hello {{user_name}}, nice to see you!</h2>
+                <h6>Your login: {{user_login}}</h6>
+      </div><br>
+      <h2>Software Tools</h2>
+
+      {% if True %}
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Rating</th>
+                      <th class="text-end">Details</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for tool in tools %}
+                      <tr>
+                          <td>{{ tool.name }}</td>
+                          <td>{% include "star_rating.html" %}</td>
+                          <td class="text-end"><a href="{{ url_for('details', id=tool.id) }}" class="btn btn-outline-secondary">Details</a></td>
+                      </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      {% else %}
+          <p>No software tool exist.  Select Add new software tool to add one.</p>
+      {% endif %}
+
+      <div class="d-flex justify-content-end">
+              <a href="{{ url_for('create_software_tool') }}" class="btn btn-primary">Add new software tool</a>
+      </div>
+{% endblock %}
