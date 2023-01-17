@@ -4,7 +4,7 @@ import requests
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
-
+import logging
 import os
 from models.models import Tool, Review, db
 
@@ -26,13 +26,8 @@ app.config.update(
 
 db.init_app(app)
 migrate = Migrate(app, db)
-
-GITHUB_URL = "https://api.github.com/user"
-# from logging import getLogger
-import logging
-
 logging.basicConfig()
-# LOGGER = getLogger(__name__)
+GITHUB_URL = "https://api.github.com/user"
 
 def _get_current_user():
     user_token = request.headers.get("X-Ms-Token-Github-Access-Token")
@@ -77,14 +72,19 @@ def add_software_tool():
         name = request.values.get('software_tool_name')
         link = request.values.get('website_link')
         description = request.values.get('description')
+
+        if len(link) <= 3:
+            app.logger.debug(f"Length of link is <= 3")
+        if len(description) <= 20:
+            app.logger.debug(f"Length of description is <= 20")
+
         if not name or not link or not description:
-            raise KeyError("Name or link or description is nan")
-            # app.logger.warning("")
+            app.logger.error("Software tool name, link or description is empty")
+            raise KeyError({'error_message': "You must include a tool name, link, and description"})
+
     except (KeyError):
-        # Redisplay the question voting form.
-        return render_template('add_software_tool.html', {
-            'error_message': "You must include a tool name, link, and description",
-        })
+        error_mess = "Software tool name, link and description cannot be empty"
+        return render_template('create_software_tool.html', error=error_mess)
     else:
         tool = Tool(name, link, description)
         db.session.add(tool)
@@ -100,11 +100,11 @@ def add_review(id):
         user_name = request.values.get('user_name')
         rating = request.values.get('rating')
         review_text = request.values.get('review_text')
-    except (KeyError):
-        # Redisplay the question voting form.
-        return render_template('add_review.html', {
-            'error_message': "Error adding review",
-        })
+        if not rating:
+            raise TypeError()
+    except (TypeError):
+        error_mess = "Rating cannot be empty"
+        print(error_mess)
     else:
         review = Review(tool_id=id, user_name=user_name, rating=rating, review_text=review_text)
         db.session.add(review)
@@ -119,7 +119,7 @@ def utility_processor():
         reviews = Review.query.where(Review.tool_id == id)
 
         ratings = []
-        review_count = 0;
+        review_count = 0
         for review in reviews:
             ratings += [review.rating]
             review_count += 1

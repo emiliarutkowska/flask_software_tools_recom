@@ -9,9 +9,12 @@
       }
   </style>
 {% endblock %}
+
 {% block content %}
     <h1>Add New Software Tool</h1>
-
+    {% if error %}
+        <p class=error style="background-color:Tomato;"><strong>Error:</strong> {{ error }}
+    {% endif %}
     <form method="POST" action="{{ url_for('add_software_tool') }}">
         <div class="mb-3">
           <label for="software_tool_name" class="form-label">Name</label>
