@@ -48,13 +48,6 @@ def _get_current_user():
 
 @app.route('/', methods=['GET'])
 def index():
-
-    app.logger.debug("debug log info")
-    app.logger.info("Info log information")
-    app.logger.warning("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWarning log info")
-    app.logger.error("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEError log info")
-    app.logger.critical("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCritical log info")
-
     user = _get_current_user()
     print('Request for index page received')
     tools = Tool.query.all()
@@ -84,6 +77,9 @@ def add_software_tool():
         name = request.values.get('software_tool_name')
         link = request.values.get('website_link')
         description = request.values.get('description')
+        if not name or not link or not description:
+            raise KeyError("Name or link or description is nan")
+            # app.logger.warning("")
     except (KeyError):
         # Redisplay the question voting form.
         return render_template('add_software_tool.html', {
