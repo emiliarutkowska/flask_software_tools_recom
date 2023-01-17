@@ -12,13 +12,10 @@ from models.models import Tool, Review, db
 app = Flask(__name__, static_folder='static')
 csrf = CSRFProtect(app)
 
-# WEBSITE_HOSTNAME exists only in production environment
 if not 'WEBSITE_HOSTNAME' in os.environ:
-   # local development, where we'll use environment variables
    print("Loading config.development and environment variables from .env file.")
    app.config.from_object('config.dev')
 else:
-   # production
    print("Loading config.production.")
    app.config.from_object('config.prod')
 
@@ -27,16 +24,15 @@ app.config.update(
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
 )
 
-# Initialize the database connection
 db.init_app(app)
-
-# Enable Flask-Migrate commands "flask db init/migrate/upgrade" to work
 migrate = Migrate(app, db)
 
 GITHUB_URL = "https://api.github.com/user"
-from logging import getLogger
+# from logging import getLogger
+import logging
 
-LOGGER = getLogger(__name__)
+logging.basicConfig()
+# LOGGER = getLogger(__name__)
 
 def _get_current_user():
     user_token = request.headers.get("X-Ms-Token-Github-Access-Token")
@@ -52,6 +48,13 @@ def _get_current_user():
 
 @app.route('/', methods=['GET'])
 def index():
+
+    app.logger.debug("debug log info")
+    app.logger.info("Info log information")
+    app.logger.warning("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWarning log info")
+    app.logger.error("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEError log info")
+    app.logger.critical("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCritical log info")
+
     user = _get_current_user()
     print('Request for index page received')
     tools = Tool.query.all()
